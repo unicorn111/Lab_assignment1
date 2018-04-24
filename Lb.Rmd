@@ -1,0 +1,146 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*.
+
+```{r}
+task1 <- function(num, n){
+    for(i in n){
+        count <- 0 # number of id num occurrences
+        for (j in 1:1000){
+            seq <- paste(sample(0:9, i, replace=T), collapse="") # generates the sequence of length n converted to str
+            if (grepl(num, seq)){ # checks if id num is in sequence
+               count <- count + 1 # if yes, increases count
+            }
+        }
+
+    }
+    # the strong law of large numbers states that the sample average converges almost surely to the expected value
+    p_n <- count/1000 # using strong law of large numbers p_n = sample mean = expected value
+    return(p_n)
+}
+a <- task1("027", 100)
+b <- task1("027", 200)
+c <- task1("027", 1000)
+print(a)
+print(b)
+print(c)
+
+```
+
+
+```{r}
+library(stringr)
+task2 <- function(num, n, N){
+    for(i in n){
+        count <- 0 # number of id num occurrences
+        for (j in 1:N){
+            seq <- paste(sample(0:9, i, replace=T), collapse="")  # generates the sequence of length n converted to str
+            seq_without_id <- gsub(num,"",seq) # deletes all matches of the id num
+            count <- count + (str_length(seq) - str_length(seq_without_id ))/3 # finds the difference of length and divides by the length of id num
+        }
+    }
+    # the strong law of large numbers states that the sample average converges almost surely to the expected value
+    p_n <- count/N # using strong law of large numbers p_n = sample mean = expected value
+    return(p_n)
+}
+a <- task2("027", 100, 1000) # expected number of occurrences is increasing with increasing of n respectively, so they are linearly dependent
+b <- task2("027", 200, 1000)
+c <- task2("027", 1000, 1000)
+d <- task2("027", 2000, 1000)
+print(a)
+print(b)
+print(c)
+print(d)
+print("")
+a <- task2("027", 100, 2000)
+b <- task2("027", 200, 2000)
+c <- task2("027", 1000, 2000)
+d <- task2("027", 2000, 2000)
+print(a)
+print(b)
+print(c)
+print(d)
+
+```
+
+```{r}
+library(stringr)
+task3 <- function(num){
+    seq <- ""
+    while(1){
+        if (grepl(num, seq)){ # checks if id num is in sequence
+            break # if yes - finish
+        }
+        seq <- paste(seq,sample(1:9, 1)) # adds random number from 1 to 9
+    }
+    return((str_length(seq))/2) # length of sequence
+}
+a <- task3("0 2 7")
+print(a)
+
+
+```
+
+
+```{r}
+task4 <- function(n){
+  N=1000
+  s = colMeans(matrix(sample(1:9,N*n, replace=T),N)) # a sample of N means
+  Fd <- ecdf(s) #  generates e.c.d.f
+  q = seq(0, 9, by=.0001)
+  cdf = pnorm(q, mean=mean(s), sd=sqrt(var(s))) # generate c.d.f
+  tj = seq(mean(s)-3*sqrt(var(s)), mean(s)+3*sqrt(var(s)), length.out=200) # grid of 200 points
+  max_d = max(abs(Fd(tj) - pnorm(tj, mean(s), sd=sqrt(var(s))))) # calculates maximal difference between the two c.d.f.’s
+  set.seed(42)
+  plot(Fd, verticals=TRUE, do.points=TRUE, col='brown')
+  lines(q, cdf, verticals=TRUE, do.points=TRUE, add=TRUE, col='orange') # draws graph
+  return(max_d)
+}
+a <- task4(5) # the bigger n is, the graph is more dense
+b <- task4(10)
+c <- task4(20)
+print(a)
+print(b)
+print(c)
+
+```
+
+
+```{r}
+task5 <- function(n){
+  N=1000
+  s = colMeans(matrix(rexp(N*n, rate=k/10),N)) # a sample of N means
+  Fd <- ecdf(s) #  generates e.c.d.f
+  q = seq(0, 9, by=.0001)
+  cdf = pnorm(q, mean=mean(s), sd=sqrt(var(s))) # generate c.d.f
+  tj = seq(mean(s)-3*sqrt(var(s)), mean(s)+3*sqrt(var(s)), length.out=200) # grid of 200 points
+  max_d = max(abs(Fd(tj) - pnorm(tj, mean(s), sd=sqrt(var(s))))) # calculates maximal difference between the two c.d.f.’s
+  set.seed(42)
+  plot(Fd, verticals=TRUE, do.points=TRUE, col='brown')
+  lines(q, cdf, verticals=TRUE, do.points=TRUE, add=TRUE, col='orange') # draws graph
+  return(max_d)
+}
+a <- task5(5) # the bigger n is, the graph is more dense
+b <- task5(10)
+c <- task5(20)
+print(a)
+print(b)
+print(c)
+
+```
+
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
